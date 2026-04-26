@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mahmoud Metwally — Electrical Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --bg2: #141414;
+    --bg3: #1c1c1c;
+    --gold: #e8a020;
+    --gold2: #f5c050;
+    --gold-dim: #6b4a0e;
+    --white: #f0ede8;
+    --gray: #888;
+    --border: #2a2a2a;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    opacity: 0.5;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 4rem;
+    border-bottom: 1px solid transparent;
+    transition: all 0.4s;
+    backdrop-filter: blur(0px);
+  }
+  nav.scrolled {
+    border-bottom-color: var(--border);
+    background: rgba(13,13,13,0.85);
+    backdrop-filter: blur(16px);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+  }
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray);
+    text-decoration: none;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 100%;
+    height: 1px;
+    background: var(--gold);
+    transition: right 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after { right: 0; }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 4rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.35;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: 20%; right: 10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(232,160,32,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s ease forwards;
+  }
+
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 14vw, 13rem);
+    line-height: 0.88;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    opacity: 0;
+    animation: fadeUp 0.9s 0.4s ease forwards;
+  }
+  .hero-name span {
+    color: var(--gold);
+    font-style: italic;
+    font-family: 'DM Serif Display', serif;
+  }
+
+  .hero-sub {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s ease forwards;
+  }
+  .hero-role {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray);
+    letter-spacing: 0.05em;
+  }
+  .hero-divider {
+    width: 60px; height: 1px;
+    background: var(--gold-dim);
+    flex-shrink: 0;
+  }
+  .hero-uni {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--gold);
+  }
+
+  .hero-scroll {
+    position: absolute;
+    right: 4rem; bottom: 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeIn 1s 1.2s ease forwards;
+  }
+  .hero-scroll span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gray);
+    writing-mode: vertical-rl;
+  }
+  .scroll-line {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+
+  /* Sections */
+  section {
+    padding: 7rem 4rem;
+    position: relative;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    display: inline-block;
+    width: 30px; height: 1px;
+    background: var(--gold);
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 0.95;
+    color: var(--white);
+    margin-bottom: 4rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* About */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+  .about-text p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #aaa;
+    margin-bottom: 1.5rem;
+  }
+  .about-text p strong {
+    color: var(--white);
+  }
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .stat-box {
+    background: var(--bg2);
+    padding: 2rem;
+    transition: background 0.3s;
+  }
+  .stat-box:hover { background: var(--bg3); }
+  .stat-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--gold);
+    line-height: 1;
+    display: block;
+  }
+  .stat-desc {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Skills */
+  #skills { background: var(--bg2); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .skill-card {
+    background: var(--bg2);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 100%;
+    height: 2px;
+    background: var(--gold);
+    transition: right 0.4s ease;
+  }
+  .skill-card:hover { background: var(--bg3); }
+  .skill-card:hover::before { right: 0; }
+
+  .skill-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .skill-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+  }
+  .skill-items {
+    font-size: 0.82rem;
+    color: var(--gray);
+    line-height: 1.8;
+  }
+
+  /* Projects */
+  .projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .project-card {
+    background: var(--bg);
+    padding: 2.5rem 3rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 2.5rem;
+    align-items: center;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(232,160,32,0.04));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .project-card:hover { background: var(--bg2); }
+  .project-card:hover::after { opacity: 1; }
+
+  .project-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--gold-dim);
+    line-height: 1;
+    width: 60px;
+    text-align: right;
+  }
+  .project-info h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+  .project-info p {
+    font-size: 0.88rem;
+    color: var(--gray);
+    line-height: 1.6;
+    max-width: 600px;
+  }
+  .project-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+  }
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    color: var(--gray);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .tag.gold {
+    border-color: var(--gold-dim);
+    color: var(--gold);
+    background: rgba(232,160,32,0.05);
+  }
+
+  /* Education */
+  #education { background: var(--bg2); }
+  .edu-card {
+    border: 1px solid var(--border);
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+    max-width: 700px;
+  }
+  .edu-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(to bottom, var(--gold), var(--gold-dim));
+  }
+  .edu-degree {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.7rem;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+  .edu-school {
+    font-size: 1rem;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .edu-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--gray);
+    letter-spacing: 0.1em;
+  }
+  .edu-badges {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    background: rgba(232,160,32,0.1);
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    letter-spacing: 0.05em;
+  }
+
+  /* Contact */
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+  .contact-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 6vw, 6rem);
+    line-height: 0.9;
+    color: var(--white);
+  }
+  .contact-big em {
+    color: var(--gold);
+    font-style: italic;
+    font-family: 'DM Serif Display', serif;
+  }
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: var(--gray);
+    font-size: 0.95rem;
+    transition: color 0.2s;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .contact-link:last-child { border-bottom: none; padding-bottom: 0; }
+  .contact-link:hover { color: var(--white); }
+  .contact-link:hover .contact-icon { background: var(--gold); color: var(--bg); }
+  .contact-icon {
+    width: 40px; height: 40px;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    transition: all 0.25s;
+    flex-shrink: 0;
+    color: var(--gold);
+  }
+
+  /* Footer */
+  footer {
+    padding: 2rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gray);
+    letter-spacing: 0.1em;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 5rem 1.5rem; }
+    .hero { padding: 0 1.5rem 4rem; }
+    .hero-name { font-size: 4.5rem; }
+    .hero-scroll { display: none; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .project-card { grid-template-columns: 1fr; gap: 1rem; }
+    .project-num { font-size: 2rem; width: auto; text-align: left; }
+    .project-tags { align-items: flex-start; flex-direction: row; }
+    .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">MM</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+
+  <p class="hero-eyebrow">⚡ Power & Renewable Energy Engineer</p>
+  <h1 class="hero-name">
+    Mahmoud<br>
+    <span>Metwally</span>
+  </h1>
+  <div class="hero-sub">
+    <span class="hero-role">Electrical Engineering Student</span>
+    <span class="hero-divider"></span>
+    <span class="hero-uni">Helwan University — 2nd Year</span>
+  </div>
+
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <p class="section-label reveal">About</p>
+  <h2 class="section-title reveal">Who I Am</h2>
+
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>
+        مهندس كهرباء طموح متخصص في <strong>أنظمة القوى والطاقة المتجددة</strong>، حالياً في السنة الثانية بكلية الهندسة جامعة حلوان.
+      </p>
+      <p>
+        أسعى لبناء مستقبل مهني قائم على <strong>تصميم الشبكات الكهربائية وأنظمة الطاقة الشمسية</strong>، مع إتقان أحدث أدوات التصميم المتخصصة في المجال.
+      </p>
+      <p>
+        أؤمن بأن <strong>مصر</strong> تمتلك طاقة بشرية ضخمة قادرة على قيادة مستقبل الطاقة في المنطقة — وأنا هنا لأكون جزءاً من هذا التحول.
+      </p>
+    </div>
+
+    <div class="about-stats reveal">
+      <div class="stat-box">
+        <span class="stat-number">2nd</span>
+        <p class="stat-desc">Year at Helwan University</p>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number">3</span>
+        <p class="stat-desc">Design Tools Mastered</p>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number">2</span>
+        <p class="stat-desc">Academic Projects Done</p>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number">∞</span>
+        <p class="stat-desc">Drive to Learn & Grow</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <p class="section-label reveal">Expertise</p>
+  <h2 class="section-title reveal">What I Do</h2>
+
+  <div class="skills-grid reveal">
+    <div class="skill-card">
+      <span class="skill-icon">⚡</span>
+      <h3 class="skill-name">Power Systems</h3>
+      <p class="skill-items">Electrical Distribution Design · Load Calculations · Cable Sizing · Protection Basics · Single-Line Diagrams</p>
+    </div>
+    <div class="skill-card">
+      <span class="skill-icon">☀️</span>
+      <h3 class="skill-name">Renewable Energy</h3>
+      <p class="skill-items">Solar PV System Design · Energy Yield Estimation · Grid-Connection Fundamentals · Inverter Sizing</p>
+    </div>
+    <div class="skill-card">
+      <span class="skill-icon">🖥️</span>
+      <h3 class="skill-name">Design Software</h3>
+      <p class="skill-items">AutoCAD · Revit · CADElectric · Microsoft Office Suite</p>
+    </div>
+    <div class="skill-card">
+      <span class="skill-icon">🤝</span>
+      <h3 class="skill-name">Teamwork</h3>
+      <p class="skill-items">Collaborative Project Delivery · Cross-functional Communication · Academic Team Leadership</p>
+    </div>
+    <div class="skill-card">
+      <span class="skill-icon">🧩</span>
+      <h3 class="skill-name">Problem Solving</h3>
+      <p class="skill-items">Analytical Thinking · Technical Troubleshooting · Engineering Calculations · Creative Solutions</p>
+    </div>
+    <div class="skill-card">
+      <span class="skill-icon">🌍</span>
+      <h3 class="skill-name">Languages</h3>
+      <p class="skill-items">Arabic — Native · English — Professional (Reading & Technical Writing)</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <p class="section-label reveal">Work</p>
+  <h2 class="section-title reveal">Academic Projects</h2>
+
+  <div class="projects-list reveal">
+    <div class="project-card">
+      <div class="project-num">01</div>
+      <div class="project-info">
+        <h3>Electrical Power Distribution System</h3>
+        <p>Designed a complete low-voltage distribution network layout using AutoCAD Electrical and CADElectric. Performed load calculations, cable sizing, and protection device coordination for a residential distribution system — produced full panel schedules per IEC standards.</p>
+      </div>
+      <div class="project-tags">
+        <span class="tag gold">Power Systems</span>
+        <span class="tag">AutoCAD</span>
+        <span class="tag">CADElectric</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-num">02</div>
+      <div class="project-info">
+        <h3>Rooftop Solar PV System Design</h3>
+        <p>Designed a small-scale rooftop solar PV system including panel layout, inverter sizing, and full wiring using Revit and AutoCAD. Studied energy yield estimation and grid-connection requirements — presented to faculty in a competitive project review.</p>
+      </div>
+      <div class="project-tags">
+        <span class="tag gold">Renewable Energy</span>
+        <span class="tag">Revit</span>
+        <span class="tag">AutoCAD</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <p class="section-label reveal">Background</p>
+  <h2 class="section-title reveal">Education</h2>
+
+  <div class="edu-card reveal">
+    <h3 class="edu-degree">B.Sc. Electrical Engineering<br>Power & Machines</h3>
+    <p class="edu-school">Helwan University — Faculty of Engineering</p>
+    <p class="edu-meta">2023 – Present &nbsp;|&nbsp; Currently: 2nd Year &nbsp;|&nbsp; Grade: Good</p>
+    <div class="edu-badges">
+      <span class="badge">Power Systems</span>
+      <span class="badge">Renewable Energy</span>
+      <span class="badge">Electrical Design</span>
+      <span class="badge">Giza, Egypt</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-label reveal">Get In Touch</p>
+  <div class="contact-inner">
+    <div class="reveal">
+      <h2 class="contact-big">
+        Let's<br>
+        <em>Work</em><br>
+        Together
+      </h2>
+    </div>
+
+    <div class="contact-links reveal">
+      <a class="contact-link" href="mailto:mahmoudmetwallybek@gmail.com">
+        <div class="contact-icon">✉</div>
+        <div>
+          <div style="font-size:0.75rem;color:var(--gray);margin-bottom:4px;font-family:'Space Mono',monospace;letter-spacing:0.1em;">EMAIL</div>
+          mahmoudmetwallybek@gmail.com
+        </div>
+      </a>
+      <a class="contact-link" href="tel:+201040834268">
+        <div class="contact-icon">📞</div>
+        <div>
+          <div style="font-size:0.75rem;color:var(--gray);margin-bottom:4px;font-family:'Space Mono',monospace;letter-spacing:0.1em;">PHONE</div>
+          +20 104 083 4268
+        </div>
+      </a>
+      <div class="contact-link">
+        <div class="contact-icon">📍</div>
+        <div>
+          <div style="font-size:0.75rem;color:var(--gray);margin-bottom:4px;font-family:'Space Mono',monospace;letter-spacing:0.1em;">LOCATION</div>
+          Giza, Egypt
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 Mahmoud Metwally — Electrical Engineer</p>
+  <p>Built with passion ⚡ Cairo, Egypt</p>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx - 6}px, ${my - 6}px)`;
+  });
+  function animateRing() {
+    rx += (mx - rx - 18) * 0.12;
+    ry += (my - ry - 18) * 0.12;
+    ring.style.transform = `translate(${rx}px, ${ry}px)`;
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), 100);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
